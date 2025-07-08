@@ -368,24 +368,6 @@ curl -X POST http://localhost:3000/api/search/multi \
 - Test with multiple queries
 - Document any special requirements
 
-## 📈 Roadmap
-
-### Planned Features
-- [ ] **Real-time Price Tracking**: Monitor price changes over time
-- [ ] **Price Alerts**: Notify users of price drops
-- [ ] **Historical Data**: Store and analyze price history
-- [ ] **Advanced Filtering**: Filter by brand, rating, availability
-- [ ] **Mobile App**: React Native mobile application
-- [ ] **API Rate Limiting**: Protect against abuse
-- [ ] **Webhook Support**: Real-time notifications
-- [ ] **Analytics Dashboard**: Usage statistics and insights
-
-### Performance Improvements
-- [ ] **Caching Layer**: Redis for frequently searched items
-- [ ] **CDN Integration**: Faster global access
-- [ ] **Database Storage**: Persistent price history
-- [ ] **Background Jobs**: Scheduled price updates
-- [ ] **Load Balancing**: Multiple server instances
 
 ## 📄 License
 
@@ -492,13 +474,3 @@ heroku config:set GROQ_API_KEY=your_key
 # Deploy
 git push heroku main
 ```
-
-## 📸 Proof of Working Examples
-
-### Test Results Screenshots
-- [iPhone 16 Pro US Search Results](screenshots/iphone16pro-us.png)
-- [boAt Airdopes India Search Results](screenshots/boat-airdopes-in.png)
-- [Multi-country Search Demo](screenshots/multi-country.png)
-
-### Video Demo
-- [Complete Demo Video](https://youtu.be/your-demo-video)
