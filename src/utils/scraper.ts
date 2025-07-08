@@ -49,6 +49,7 @@ export class BaseScraper {
             }
           }
         } catch (error) {
+          console.error('Error scraping:', error);
           console.log(
             `Failed attempt ${attempt} for ${
               this.config.name
@@ -81,7 +82,7 @@ export class BaseScraper {
     const randomDelay = Math.random() * 2000 + 1000; // 1-3 seconds
     await new Promise((resolve) => setTimeout(resolve, randomDelay));
 
-    const headers = {
+    const headers: Record<string, string> = {
       'User-Agent': userAgent,
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -98,7 +99,7 @@ export class BaseScraper {
       Referer: 'https://www.google.com/',
       'X-Forwarded-For': this.getRandomIP(),
       'X-Real-IP': this.getRandomIP(),
-      ...this.config.headers,
+      ...(this.config.headers as Record<string, string>),
     };
 
     // Add more sophisticated headers for later attempts

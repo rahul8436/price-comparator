@@ -1,4 +1,4 @@
-export async function fetchBestBuyProducts(query: string) {
+export async function fetchBestBuyProducts() {
   // TODO: Implement real scraping or API logic
   // For now, return a mocked response
   return [
@@ -10,4 +10,4 @@ export async function fetchBestBuyProducts(query: string) {
       source: 'BestBuy',
     },
   ];
-} 
+}

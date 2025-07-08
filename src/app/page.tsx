@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import ProductCard from '../components/ProductCard';
+import type { Country } from '@/utils/countrySites';
 
 interface ProductResult {
   link: string;
@@ -15,13 +16,6 @@ interface ProductResult {
   availability?: string;
 }
 
-interface Country {
-  code: string;
-  name: string;
-  currency: string;
-  sites?: Array<{ name: string; scraperClass: string; enabled: boolean }>;
-}
-
 function OfficialSiteCard({ url, title }: { url: string; title: string }) {
   return (
     <div className={styles.officialSiteCard}>
@@ -31,8 +25,8 @@ function OfficialSiteCard({ url, title }: { url: string; title: string }) {
       </div>
       <a
         href={url}
-        target="_blank"
-        rel="noopener noreferrer"
+        target='_blank'
+        rel='noopener noreferrer'
         className={styles.officialSiteButton}
       >
         Go to Official Site
@@ -49,7 +43,10 @@ export default function Home() {
   const [error, setError] = useState('');
   const [countries, setCountries] = useState<Country[]>([]);
   const [countryHasFetcher, setCountryHasFetcher] = useState(true);
-  const [officialSite, setOfficialSite] = useState<{ url: string; title: string } | null>(null);
+  const [officialSite, setOfficialSite] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
   const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   // Only show examples for countries with at least one enabled site
@@ -75,11 +72,12 @@ export default function Home() {
         // Filter example queries to only those with enabled fetchers
         setExampleQueries((prev) =>
           prev.filter((ex) =>
-            data.countries.some((c: any) => c.code === ex.country)
+            data.countries.some((c: Country) => c.code === ex.country)
           )
         );
       }
     } catch (error) {
+      console.error('Error fetching countries:', error);
       // fallback to hardcoded
       setCountries([
         { code: 'US', name: 'United States', currency: 'USD' },
@@ -232,7 +230,7 @@ export default function Home() {
             <p
               style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}
             >
-              Note: Some sites may block automated requests, so we'll show demo
+              Note: Some sites may block automated requests, so we will show demo
               data for demonstration
             </p>
           </div>
@@ -244,7 +242,9 @@ export default function Home() {
         {isUsingMockData && (
           <div className={styles.demoNotice}>
             <span className={styles.demoBadge}>Demo Mode</span>
-            <span className={styles.demoText}>Showing sample data for demonstration purposes</span>
+            <span className={styles.demoText}>
+              Showing sample data for demonstration purposes
+            </span>
           </div>
         )}
         {results.length > 0 && (
@@ -260,7 +260,7 @@ export default function Home() {
       </main>
 
       <footer className={styles.footer}>
-        <p className={styles.credits}>Made by Rahul</p>
+        <p className={styles.credits}>Made by Rahul&apos;</p>
       </footer>
     </div>
   );

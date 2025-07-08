@@ -1,5 +1,6 @@
 import Groq from 'groq-sdk';
 import Fuse from 'fuse.js';
+import { ProductResult } from '@/types/product';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -9,10 +10,10 @@ const groq = new Groq({
 
 // Local filtering: deduplicate, fuzzy match, price sort, top N
 export function localFilterProducts(
-  products: any[],
+  products: ProductResult[],
   query: string,
   topN: number = 10
-): any[] {
+): ProductResult[] {
   // 1. Deduplicate by normalized name + price
   const seen = new Set();
   const deduped = products.filter((p) => {
@@ -43,7 +44,7 @@ export function localFilterProducts(
     });
     const broaderResults = broaderFuse.search(query).map((r) => r.item);
     if (broaderResults.length > fuzzyResults.length) {
-      return broaderResults.slice(0, topN);
+      return broaderResults.slice(0, topN) as ProductResult[];
     }
   }
 
@@ -105,7 +106,7 @@ export async function callGroqLLM(prompt: string): Promise<string> {
 }
 
 // Helper to strip unnecessary fields for LLM
-function minimalProductFields(products: any[]): any[] {
+function minimalProductFields(products: ProductResult[]): Partial<ProductResult>[] {
   return products.map((p) => ({
     name: p.productName?.substring(0, 100), // Truncate long names
     price: p.price,
@@ -116,10 +117,10 @@ function minimalProductFields(products: any[]): any[] {
 
 // Hybrid: local filter, then LLM for top N, fallback to local if LLM fails or returns too few
 export async function filterProductsWithLLM(
-  products: any[],
+  products: ProductResult[],
   query: string,
   options?: { topN?: number; useLLM?: boolean }
-): Promise<any[]> {
+): Promise<ProductResult[]> {
   const topN = options?.topN ?? 20;
   const useLLM = options?.useLLM !== false; // default true
 
@@ -145,10 +146,10 @@ JSON array only:`;
       if (Array.isArray(parsed)) {
         // Map LLM output back to full product objects using 'link' as unique key
         const localMap = new Map(localFiltered.map((p) => [p.link, p]));
-        const merged = parsed.map((llmProd: any) => {
-          const full = localMap.get(llmProd.link);
+        const merged = parsed.map((llmProd: Partial<ProductResult>) => {
+          const full = localMap.get(llmProd.link!);
           return full ? full : llmProd;
-        });
+        }) as ProductResult[];
         // If LLM returns too few products or rate limited, fallback to local
         if (merged.length < 3) {
           console.log('LLM returned too few products, using local filtering');
@@ -172,7 +173,7 @@ JSON array only:`;
 }
 
 // Helper function to sort products by price ascending
-function sortProductsByPrice(products: any[]): any[] {
+function sortProductsByPrice(products: ProductResult[]): ProductResult[] {
   return products.sort((a, b) => {
     const priceA = parseFloat(a.price?.replace(/[^\d.]/g, '') || '0');
     const priceB = parseFloat(b.price?.replace(/[^\d.]/g, '') || '0');

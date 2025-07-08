@@ -61,8 +61,10 @@ export interface Scraper {
   fetchProducts(query: string): Promise<ProductResult[]>;
 }
 
+type ScraperConstructor = (new (country: string) => Scraper) | (new () => Scraper);
+
 // Scraper class mapping
-const scraperClasses: Record<string, any> = {
+const scraperClasses: Record<string, ScraperConstructor> = {
   AmazonScraper,
   FlipkartScraper,
   BestBuyScraper,
@@ -152,9 +154,9 @@ function createScraper(
   try {
     // Some scrapers need country code, others don't
     if (countryCode) {
-      return new ScraperClass(countryCode);
+      return new ScraperClass(countryCode) as Scraper;
     } else {
-      return new ScraperClass();
+      return new (ScraperClass as new () => Scraper)();
     }
   } catch (error) {
     console.error(`Error creating scraper ${scraperClassName}:`, error);
@@ -211,14 +213,14 @@ export function getScraperStats(): {
     0
   );
 
-  const scraperClasses = Object.keys(scraperClasses).length;
+  const scraperClassCount = Object.keys(scraperClasses).length;
 
   return {
     totalCountries,
     countriesWithScrapers,
     totalSites,
     enabledSites,
-    scraperClasses,
+    scraperClasses: scraperClassCount,
   };
 }
 

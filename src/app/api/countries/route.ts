@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
-import { 
-  getSupportedCountries, 
+import {
+  getSupportedCountries,
   getCountriesWithEnabledSites,
-  countryConfigs 
+  countryConfigs,
+  SiteConfig,
 } from '@/utils/countrySites';
 import { getScraperStats } from '@/utils/scraperFactory';
+
+interface CountryResponse {
+  countries: Array<{
+    code: string;
+    name: string;
+    currency: string;
+    sites: SiteConfig[];
+  }>;
+  total: number;
+  stats?: ReturnType<typeof getScraperStats>;
+}
 
 export async function GET(request: Request) {
   try {
@@ -19,17 +31,17 @@ export async function GET(request: Request) {
       countries = getCountriesWithEnabledSites();
     }
 
-    const response: any = {
-      countries: countries.map(country => {
-        const config = countryConfigs.find(c => c.code === country.code);
+    const response: CountryResponse = {
+      countries: countries.map((country) => {
+        const config = countryConfigs.find((c) => c.code === country.code);
         return {
           ...country,
-          sites: includeDisabled 
+          sites: includeDisabled
             ? config?.sites || []
-            : config?.sites.filter(site => site.enabled) || []
+            : config?.sites.filter((site) => site.enabled) || [],
         };
       }),
-      total: countries.length
+      total: countries.length,
     };
 
     if (includeStats) {
@@ -44,4 +56,4 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './ProductCard.module.css';
+import Image from 'next/image';
 
 interface ProductCardProps {
   link: string;
@@ -46,6 +47,24 @@ const getSourceIcon = (source: string) => {
   return icons[source] || '🏪';
 };
 
+const allowedDomains = [
+  'fls-na.amazon.com',
+  'images-na.ssl-images-amazon.com',
+  'm.media-amazon.com',
+  'rukminim1.flixcart.com',
+  'i5.walmartimages.com',
+  // Add more as needed
+];
+
+function isAllowedDomain(url: string) {
+  try {
+    const { hostname } = new URL(url);
+    return allowedDomains.includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
 const ProductCard: React.FC<ProductCardProps> = ({
   link,
   price,
@@ -60,9 +79,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <div className={styles.card}>
       <div className={styles.imageWrapper}>
         {imageUrl ? (
-          <img src={imageUrl} alt={productName} className={styles.image} />
+          isAllowedDomain(imageUrl) ? (
+            <Image
+              src={imageUrl}
+              alt={productName}
+              width={200}
+              height={200}
+              className={styles.image}
+            />
+          ) : (
+            <img
+              src={imageUrl}
+              alt={productName}
+              width={200}
+              height={200}
+              className={styles.image}
+              loading="lazy"
+            />
+          )
         ) : (
-          <div className={styles.noImage}>🛍️</div>
+          <div className={styles.noImage}>🛒</div>
         )}
         <div className={styles.priceTag}>
           {currency} {price}

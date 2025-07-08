@@ -5,26 +5,29 @@ import { getCountriesForCategory } from '@/utils/scraperFactory';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { query, countries, categories, maxResults = 50, timeout = 10000 } = body;
+    const {
+      query,
+      countries,
+      categories,
+      maxResults = 50,
+      timeout = 10000,
+    } = body;
 
     if (!query) {
-      return NextResponse.json(
-        { error: 'Query is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Query is required' }, { status: 400 });
     }
 
     let targetCountries = countries;
-    
+
     // If categories are specified, filter countries that support those categories
     if (categories && categories.length > 0) {
-      const categoryCountries = categories.map(category => 
-        getCountriesForCategory(category)
-      ).flat();
-      
+      const categoryCountries = categories
+        .map((category: string) => getCountriesForCategory(category))
+        .flat();
+
       if (targetCountries) {
         // Intersection of requested countries and category-supporting countries
-        targetCountries = targetCountries.filter(country => 
+        targetCountries = targetCountries.filter((country: string) =>
           categoryCountries.includes(country)
         );
       } else {
@@ -40,21 +43,19 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log(`Multi-country search: "${query}" across ${targetCountries.length} countries`);
-
-    const results = await fetchFromMultipleCountries(
-      targetCountries,
-      query,
-      {
-        maxResults,
-        timeout,
-        categories
-      }
+    console.log(
+      `Multi-country search: "${query}" across ${targetCountries.length} countries`
     );
+
+    const results = await fetchFromMultipleCountries(targetCountries, query, {
+      maxResults,
+      timeout,
+      categories,
+    });
 
     // Calculate total results across all countries
     const totalResults = Object.values(results).reduce(
-      (sum, countryResults) => sum + countryResults.length, 
+      (sum, countryResults) => sum + countryResults.length,
       0
     );
 
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
       categories,
       results,
       totalResults,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return NextResponse.json(response);
@@ -75,4 +76,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

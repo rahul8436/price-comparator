@@ -14,6 +14,13 @@ export interface CountryConfig {
   sites: SiteConfig[];
 }
 
+export type Country = {
+  code: string;
+  name: string;
+  currency: string;
+  sites?: Array<{ name: string; scraperClass: string; enabled: boolean }>;
+};
+
 export const countryConfigs: CountryConfig[] = [
   {
     name: 'United States',

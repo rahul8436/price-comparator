@@ -66,16 +66,19 @@ function getBrandDomain(brand: string, country?: string): string | null {
   return entry['US'] || Object.values(entry)[0] || null;
 }
 
-async function tryGoogle(query: string, country?: string) {
+async function tryGoogle(query: string, country?: string): Promise<{ url: string; title: string } | null> {
   try {
     const tld = country && country !== 'US' ? country.toLowerCase() : 'com';
-    const googleUrl = `https://www.google.${tld}/search?q=${encodeURIComponent(query + ' official site ' + (country || ''))}`;
+    const googleUrl = `https://www.google.${tld}/search?q=${encodeURIComponent(
+      query + ' official site ' + (country || '')
+    )}`;
     const headers = {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Accept-Language': 'en-US,en;q=0.9',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-      'Referer': 'https://www.google.com/',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      Referer: 'https://www.google.com/',
     };
     const resp = await axios.get(googleUrl, { headers });
     const html = resp.data;
@@ -86,10 +89,13 @@ async function tryGoogle(query: string, country?: string) {
     // Google desktop: .g .yuRUbf > a
     const allResults = $('.g .yuRUbf > a').toArray();
     // Prefer result with country TLD
-    let bestResult: any = null;
+    let bestResult: cheerio.Element | null = null;
     for (const el of allResults) {
       const href = $(el).attr('href') || '';
-      if (country && href.match(new RegExp(`\\.${country.toLowerCase()}[\\/\?]`))) {
+      if (
+        country &&
+        href.match(new RegExp(`\\.${country.toLowerCase()}[\\/\?]`))
+      ) {
         bestResult = el;
         break;
       }
@@ -99,7 +105,11 @@ async function tryGoogle(query: string, country?: string) {
       foundUrl = $(bestResult).attr('href') || '';
       foundTitle = $(bestResult).find('h3').text().trim();
     }
-    if (foundUrl && !foundUrl.includes('google.com') && !foundUrl.includes('/search?')) {
+    if (
+      foundUrl &&
+      !foundUrl.includes('google.com') &&
+      !foundUrl.includes('/search?')
+    ) {
       return { url: foundUrl, title: foundTitle };
     }
     return null;
@@ -109,25 +119,31 @@ async function tryGoogle(query: string, country?: string) {
   }
 }
 
-async function tryBing(query: string, country?: string) {
+async function tryBing(query: string, country?: string): Promise<{ url: string; title: string } | null> {
   try {
-    const bingUrl = `https://www.bing.com/search?q=${encodeURIComponent(query + ' official site ' + (country || ''))}`;
+    const bingUrl = `https://www.bing.com/search?q=${encodeURIComponent(
+      query + ' official site ' + (country || '')
+    )}`;
     const headers = {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Accept-Language': 'en-US,en;q=0.9',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-      'Referer': 'https://www.bing.com/',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      Referer: 'https://www.bing.com/',
     };
     const resp = await axios.get(bingUrl, { headers });
     const html = resp.data;
     const $ = cheerio.load(html);
     // Bing: .b_algo h2 a
     const allResults = $('.b_algo h2 a').toArray();
-    let bestResult: any = null;
+    let bestResult: cheerio.Element | null = null;
     for (const el of allResults) {
       const href = $(el).attr('href') || '';
-      if (country && href.match(new RegExp(`\\.${country.toLowerCase()}[\\/\?]`))) {
+      if (
+        country &&
+        href.match(new RegExp(`\\.${country.toLowerCase()}[\\/\?]`))
+      ) {
         bestResult = el;
         break;
       }
@@ -147,25 +163,31 @@ async function tryBing(query: string, country?: string) {
   }
 }
 
-async function tryDuckDuckGo(query: string, country?: string) {
+async function tryDuckDuckGo(query: string, country?: string): Promise<{ url: string; title: string } | null> {
   try {
-    const ddgUrl = `https://duckduckgo.com/html/?q=${encodeURIComponent(query + ' official site ' + (country || ''))}`;
+    const ddgUrl = `https://duckduckgo.com/html/?q=${encodeURIComponent(
+      query + ' official site ' + (country || '')
+    )}`;
     const headers = {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Accept-Language': 'en-US,en;q=0.9',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-      'Referer': 'https://duckduckgo.com/',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      Referer: 'https://duckduckgo.com/',
     };
     const resp = await axios.get(ddgUrl, { headers });
     const html = resp.data;
     const $ = cheerio.load(html);
     // DuckDuckGo: .result__a
     const allResults = $('.result__a').toArray();
-    let bestResult: any = null;
+    let bestResult: cheerio.Element | null = null;
     for (const el of allResults) {
       const href = $(el).attr('href') || '';
-      if (country && href.match(new RegExp(`\\.${country.toLowerCase()}[\\/\?]`))) {
+      if (
+        country &&
+        href.match(new RegExp(`\\.${country.toLowerCase()}[\\/\?]`))
+      ) {
         bestResult = el;
         break;
       }
@@ -185,13 +207,21 @@ async function tryDuckDuckGo(query: string, country?: string) {
   }
 }
 
-function tryBrandHeuristic(query: string, country?: string): { url: string, title: string } | null {
+function tryBrandHeuristic(
+  query: string,
+  country?: string
+): { url: string; title: string } | null {
   const lower = query.toLowerCase();
   for (const brand in BRAND_DOMAINS) {
     if (lower.includes(brand)) {
       const url = getBrandDomain(brand, country);
       if (url) {
-        return { url, title: `${brand.charAt(0).toUpperCase() + brand.slice(1)} Official Site` };
+        return {
+          url,
+          title: `${
+            brand.charAt(0).toUpperCase() + brand.slice(1)
+          } Official Site`,
+        };
       }
     }
   }
@@ -199,7 +229,9 @@ function tryBrandHeuristic(query: string, country?: string): { url: string, titl
 }
 
 // Helper: Try to extract product info from a product page
-async function scrapeProductPage(url: string): Promise<{ imageUrl?: string; price?: string; rating?: string }> {
+async function scrapeProductPage(
+  url: string
+): Promise<{ imageUrl?: string; price?: string; rating?: string }> {
   try {
     const { data: html } = await axios.get(url, {
       headers: {
@@ -215,11 +247,15 @@ async function scrapeProductPage(url: string): Promise<{ imageUrl?: string; pric
       $('meta[property="og:image"]').attr('content') ||
       $('img[alt*="product"], img[alt*="Product"], img').first().attr('src') ||
       '';
-    let price =
+    const price =
       $('[itemprop="price"]').attr('content') ||
-      $('[class*="price"], .price, .product-price').first().text().replace(/[^\d.,₹$€£]/g, '').trim() ||
+      $('[class*="price"], .price, .product-price')
+        .first()
+        .text()
+        .replace(/[^\d.,₹$€£]/g, '')
+        .trim() ||
       '';
-    let rating =
+    const rating =
       $('[itemprop="ratingValue"]').attr('content') ||
       $('[class*="rating"], .star-rating').first().text().trim() ||
       '';
@@ -233,9 +269,15 @@ async function scrapeProductPage(url: string): Promise<{ imageUrl?: string; pric
 }
 
 // Helper: Find the most relevant product page on the official site
-async function findProductPageOnOfficialSite(brandUrl: string, query: string, country?: string): Promise<string | null> {
+async function findProductPageOnOfficialSite(
+  brandUrl: string,
+  query: string,
+  country?: string
+): Promise<string | null> {
   // Use Google or Bing to search: site:brandUrl query
-  const searchQuery = `site:${brandUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')} ${query}`;
+  const searchQuery = `site:${brandUrl
+    .replace(/^https?:\/\//, '')
+    .replace(/\/$/, '')} ${query}`;
   // Try Google first
   let result = await tryGoogle(searchQuery, country);
   if (result && result.url && result.url.includes(brandUrl)) return result.url;
@@ -248,7 +290,16 @@ async function findProductPageOnOfficialSite(brandUrl: string, query: string, co
   return null;
 }
 
-export async function getOfficialSiteUrl(query: string, country?: string): Promise<{ url: string, title: string, imageUrl?: string, price?: string, rating?: string } | null> {
+export async function getOfficialSiteUrl(
+  query: string,
+  country?: string
+): Promise<{
+  url: string;
+  title: string;
+  imageUrl?: string;
+  price?: string;
+  rating?: string;
+} | null> {
   // Try Google
   let result = await tryGoogle(query, country);
   if (!result) result = await tryBing(query, country);
@@ -257,17 +308,26 @@ export async function getOfficialSiteUrl(query: string, country?: string): Promi
   if (!result) result = tryBrandHeuristic(query, country);
   if (!result) return null;
 
-  let { url, title } = result;
-  let imageUrl = '', price = '', rating = '';
+  let { url } = result;
+  const { title } = result;
+  let imageUrl = '',
+    price = '',
+    rating = '';
 
   // Try to find a product page on the official site
-  const brandMatch = Object.keys(BRAND_DOMAINS).find((b) => query.toLowerCase().includes(b));
+  const brandMatch = Object.keys(BRAND_DOMAINS).find((b) =>
+    query.toLowerCase().includes(b)
+  );
   let brandUrl = '';
   if (brandMatch) {
     brandUrl = getBrandDomain(brandMatch, country) || '';
     // If the found url is not a product page, try to find one
     if (brandUrl && url.replace(/\/$/, '') === brandUrl.replace(/\/$/, '')) {
-      const productPage = await findProductPageOnOfficialSite(brandUrl, query, country);
+      const productPage = await findProductPageOnOfficialSite(
+        brandUrl,
+        query,
+        country
+      );
       if (productPage) url = productPage;
     }
   }
@@ -279,4 +339,4 @@ export async function getOfficialSiteUrl(query: string, country?: string): Promi
   rating = scraped.rating || '';
 
   return { url, title, imageUrl, price, rating };
-} 
+}

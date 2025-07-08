@@ -1,4 +1,4 @@
-export async function fetchFlipkartProducts(query: string) {
+export async function fetchFlipkartProducts() {
   // TODO: Implement real scraping or API logic
   // For now, return a mocked response
   return [
@@ -10,4 +10,4 @@ export async function fetchFlipkartProducts(query: string) {
       source: 'Flipkart',
     },
   ];
-} 
+}

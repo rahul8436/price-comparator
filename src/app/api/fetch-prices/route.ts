@@ -3,10 +3,11 @@ import {
   fetchFromAllScrapers,
   getScrapersForCountry,
 } from '@/utils/scraperFactory';
-import { filterProductsWithLLM, localFilterProducts } from '@/utils/groq';
+import { filterProductsWithLLM } from '@/utils/groq';
 import { getMockProducts } from '@/utils/scrapers/mock-data';
 import { getSupportedCountries } from '@/utils/countrySites';
 import { getOfficialSiteUrl } from '@/utils/officialSiteFinder';
+import { ProductResult } from '@/types/product';
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let products: any[] = [];
+    let products: ProductResult[] = [];
     let isUsingMockData = false;
 
     if (useMockData) {
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
     console.log(`Total products before filtering: ${products.length}`);
 
     // Hybrid: local filter, then LLM for top N, fallback to local if LLM fails
-    let filteredProducts = await filterProductsWithLLM(products, query, {
+    let filteredProducts: ProductResult[] = await filterProductsWithLLM(products, query, {
       topN,
       useLLM,
     });
@@ -126,6 +127,15 @@ export async function POST(request: NextRequest) {
       scrapersUsed: availableScrapers.length,
       isUsingMockData,
       timestamp: new Date().toISOString(),
+    } satisfies {
+      products: ProductResult[];
+      totalFound: number;
+      totalFiltered: number;
+      query: string;
+      country: string;
+      scrapersUsed: number;
+      isUsingMockData: boolean;
+      timestamp: string;
     });
   } catch (error) {
     console.error('Error in fetch-prices API:', error);
