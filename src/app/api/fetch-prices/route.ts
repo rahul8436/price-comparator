@@ -85,54 +85,34 @@ export async function POST(request: NextRequest) {
     });
     // const filteredProducts = localFilterProducts(products, query, topN); // (for local-only filtering)
 
-    // For India: sort Amazon first, then Flipkart, then others
-    if (country === 'IN') {
-      filteredProducts = [
-        ...filteredProducts.filter(
-          (p) => p.source && p.source.toLowerCase().includes('amazon')
-        ),
-        ...filteredProducts.filter(
-          (p) => p.source && p.source.toLowerCase().includes('flipkart')
-        ),
-        ...filteredProducts.filter(
-          (p) =>
-            p.source &&
-            !['amazon', 'flipkart'].some((s) =>
-              p.source.toLowerCase().includes(s)
-            )
-        ),
-      ];
-      // Debug: log any Flipkart product with non-INR or missing/strange price
-      filteredProducts.forEach((p) => {
-        if (p.source && p.source.toLowerCase().includes('flipkart')) {
-          if (p.currency !== 'INR' || !p.price || isNaN(Number(p.price))) {
-            console.log('Flipkart price/currency issue:', p);
-          }
-        }
-      });
-    }
-
     // Find official site for the query
     const officialSite = await getOfficialSiteUrl(query, country);
 
-    // Insert official site as the first product if found and not already present
+    // Insert official site as a product if found and not already present
     if (officialSite) {
       const alreadyPresent = filteredProducts.some(
         (p) => p.link && p.link.includes(officialSite.url)
       );
       if (!alreadyPresent) {
-        filteredProducts.unshift({
+        filteredProducts.push({
           link: officialSite.url,
-          price: '',
+          price: officialSite.price || '',
           currency: '',
           productName: officialSite.title || 'Official Site',
           source: 'Official Site',
-          imageUrl: '',
-          rating: '',
+          imageUrl: officialSite.imageUrl || '',
+          rating: officialSite.rating || '',
           availability: 'Available',
         });
       }
     }
+
+    // Strict price sorting for all countries (including India)
+    filteredProducts = filteredProducts.sort((a, b) => {
+      const priceA = parseFloat((a.price || '').replace(/[^\d.]/g, '')) || 0;
+      const priceB = parseFloat((b.price || '').replace(/[^\d.]/g, '')) || 0;
+      return priceA - priceB;
+    });
 
     console.log(`Products after AI filtering: ${filteredProducts.length}`);
     console.log('=== Price fetch completed ===\n');
@@ -143,7 +123,6 @@ export async function POST(request: NextRequest) {
       totalFiltered: filteredProducts.length,
       query,
       country,
-      // officialSite, // removed as now included in products
       scrapersUsed: availableScrapers.length,
       isUsingMockData,
       timestamp: new Date().toISOString(),
