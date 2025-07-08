@@ -1,0 +1,106 @@
+export { AmazonScraper } from './amazon';
+export { FlipkartScraper } from './flipkart';
+export { BestBuyScraper } from './bestbuy';
+export { EbayScraper } from './ebay';
+export { WalmartScraper } from './walmart';
+export { ArgosScraper } from './argos';
+export { MediaMarktScraper } from './mediamarkt';
+export { LazadaScraper } from './lazada';
+export { NoonScraper } from './noon';
+export { AmericanasScraper } from './americanas';
+export { JBHiFiScraper } from './jbhifi';
+export { NeweggScraper } from './newegg';
+export { CurrysScraper } from './currys';
+export { MercadoLivreScraper } from './mercado-livre';
+export { Qoo10Scraper } from './qoo10.stub';
+export { ShopeeScraper } from './shopee.stub';
+export { TokopediaScraper } from './tokopedia.stub';
+export { YodobashiScraper } from './yodobashi.stub';
+export { RakutenScraper } from './rakuten.stub';
+export { FnacScraper } from './fnac.stub';
+export { DartyScraper } from './darty.stub';
+export { UnieuroScraper } from './unieuro.stub';
+export { PcComponentesScraper } from './pccomponentes.stub';
+export { CoolblueScraper } from './coolblue.stub';
+export { LiverpoolScraper } from './liverpool.stub';
+export { CarrefourUAEScraper } from './carrefouruae.stub';
+export { TakealotScraper } from './takealot.stub';
+export { MakroScraper } from './makro.stub';
+export { JumiaScraper } from './jumia.stub';
+export { KongaScraper } from './konga.stub';
+export { KilimallScraper } from './kilimall.stub';
+export { TrendyolScraper } from './trendyol.stub';
+export { HepsiburadaScraper } from './hepsiburada.stub';
+export { AllegroScraper } from './allegro.stub';
+export { MediaExpertScraper } from './mediaexpert.stub';
+export { AlzaScraper } from './alza.stub';
+export { SouqScraper } from './souq.stub';
+export { MagazineLuizaScraper } from './magazineluiza.stub';
+export { SaturnScraper } from './saturn.stub';
+export { OttoScraper } from './otto.stub';
+export { BestBuyCAScraper } from './bestbuyca.stub';
+export { WalmartCAScraper } from './walmartca.stub';
+export { CanadianTireScraper } from './canadiantire.stub';
+export { MyntraScraper } from './myntra.stub';
+export { NykaaScraper } from './nykaa.stub';
+export { CromaScraper } from './croma.stub';
+export { JohnLewisScraper } from './johnlewis.stub';
+export { TescoScraper } from './tesco.stub';
+export { MallScraper } from './mall.stub';
+export { GmarketScraper } from './gmarket.stub';
+export { CoupangScraper } from './coupang.stub';
+
+// Export all available scrapers for dynamic loading
+export const allScrapers = {
+  AmazonScraper: () => import('./amazon').then(m => m.AmazonScraper),
+  FlipkartScraper: () => import('./flipkart').then(m => m.FlipkartScraper),
+  BestBuyScraper: () => import('./bestbuy').then(m => m.BestBuyScraper),
+  EbayScraper: () => import('./ebay').then(m => m.EbayScraper),
+  WalmartScraper: () => import('./walmart').then(m => m.WalmartScraper),
+  ArgosScraper: () => import('./argos').then(m => m.ArgosScraper),
+  MediaMarktScraper: () => import('./mediamarkt').then(m => m.MediaMarktScraper),
+  LazadaScraper: () => import('./lazada').then(m => m.LazadaScraper),
+  NoonScraper: () => import('./noon').then(m => m.NoonScraper),
+  AmericanasScraper: () => import('./americanas').then(m => m.AmericanasScraper),
+  JBHiFiScraper: () => import('./jbhifi').then(m => m.JBHiFiScraper),
+  NeweggScraper: () => import('./newegg').then(m => m.NeweggScraper),
+  CurrysScraper: () => import('./currys').then(m => m.CurrysScraper),
+  MercadoLivreScraper: () => import('./mercado-livre').then(m => m.MercadoLivreScraper),
+  Qoo10Scraper: () => import('./qoo10.stub').then(m => m.Qoo10Scraper),
+  ShopeeScraper: () => import('./shopee.stub').then(m => m.ShopeeScraper),
+  TokopediaScraper: () => import('./tokopedia.stub').then(m => m.TokopediaScraper),
+  YodobashiScraper: () => import('./yodobashi.stub').then(m => m.YodobashiScraper),
+  RakutenScraper: () => import('./rakuten.stub').then(m => m.RakutenScraper),
+  FnacScraper: () => import('./fnac.stub').then(m => m.FnacScraper),
+  DartyScraper: () => import('./darty.stub').then(m => m.DartyScraper),
+  UnieuroScraper: () => import('./unieuro.stub').then(m => m.UnieuroScraper),
+  PcComponentesScraper: () => import('./pccomponentes.stub').then(m => m.PcComponentesScraper),
+  CoolblueScraper: () => import('./coolblue.stub').then(m => m.CoolblueScraper),
+  LiverpoolScraper: () => import('./liverpool.stub').then(m => m.LiverpoolScraper),
+  CarrefourUAEScraper: () => import('./carrefouruae.stub').then(m => m.CarrefourUAEScraper),
+  TakealotScraper: () => import('./takealot.stub').then(m => m.TakealotScraper),
+  MakroScraper: () => import('./makro.stub').then(m => m.MakroScraper),
+  JumiaScraper: () => import('./jumia.stub').then(m => m.JumiaScraper),
+  KongaScraper: () => import('./konga.stub').then(m => m.KongaScraper),
+  KilimallScraper: () => import('./kilimall.stub').then(m => m.KilimallScraper),
+  TrendyolScraper: () => import('./trendyol.stub').then(m => m.TrendyolScraper),
+  HepsiburadaScraper: () => import('./hepsiburada.stub').then(m => m.HepsiburadaScraper),
+  AllegroScraper: () => import('./allegro.stub').then(m => m.AllegroScraper),
+  MediaExpertScraper: () => import('./mediaexpert.stub').then(m => m.MediaExpertScraper),
+  AlzaScraper: () => import('./alza.stub').then(m => m.AlzaScraper),
+  SouqScraper: () => import('./souq.stub').then(m => m.SouqScraper),
+  MagazineLuizaScraper: () => import('./magazineluiza.stub').then(m => m.MagazineLuizaScraper),
+  SaturnScraper: () => import('./saturn.stub').then(m => m.SaturnScraper),
+  OttoScraper: () => import('./otto.stub').then(m => m.OttoScraper),
+  BestBuyCAScraper: () => import('./bestbuyca.stub').then(m => m.BestBuyCAScraper),
+  WalmartCAScraper: () => import('./walmartca.stub').then(m => m.WalmartCAScraper),
+  CanadianTireScraper: () => import('./canadiantire.stub').then(m => m.CanadianTireScraper),
+  MyntraScraper: () => import('./myntra.stub').then(m => m.MyntraScraper),
+  NykaaScraper: () => import('./nykaa.stub').then(m => m.NykaaScraper),
+  CromaScraper: () => import('./croma.stub').then(m => m.CromaScraper),
+  JohnLewisScraper: () => import('./johnlewis.stub').then(m => m.JohnLewisScraper),
+  TescoScraper: () => import('./tesco.stub').then(m => m.TescoScraper),
+  MallScraper: () => import('./mall.stub').then(m => m.MallScraper),
+  GmarketScraper: () => import('./gmarket.stub').then(m => m.GmarketScraper),
+  CoupangScraper: () => import('./coupang.stub').then(m => m.CoupangScraper),
+}; 
