@@ -230,8 +230,8 @@ export default function Home() {
             <p
               style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}
             >
-              Note: Some sites may block automated requests, so we will show demo
-              data for demonstration
+              Note: Some sites may block automated requests, so we will show
+              demo data for demonstration
             </p>
           </div>
         )}
@@ -260,7 +260,7 @@ export default function Home() {
       </main>
 
       <footer className={styles.footer}>
-        <p className={styles.credits}>Made by Rahul&apos;</p>
+        <p className={styles.credits}>Made by Rahul</p>
       </footer>
     </div>
   );
